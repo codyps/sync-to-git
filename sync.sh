@@ -1,8 +1,8 @@
 #! /bin/sh
 
 cd $(dirname $0)
-for i in *; do
+for i in svn/*; do
 	! [ -d $i ] && continue
 
-	{ echo +++++; date; cd $i && git svn rebase && git push --mirror; } >>logs/$i.log 2>&1
+	{ echo +++++; date; cd $i && git svn fetch && git push origin && git gc --aggressive --quiet; } >>logs/$i.log 2>&1
 done
