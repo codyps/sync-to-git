@@ -1,22 +1,33 @@
 #! /bin/sh
 
 if [ $# -ne 2 ]; then
-	echo "usage: $(basename $0) svn-url store repo-name"
+	echo "usage: $(basename $0) svn-url repo-name"
 	exit 1
 fi
 
 SVN_URL=$1
-DIR=$2
-NAME=$3
-GIT_URL="https://github.com/$GITHUB_USER/$NAME"
+NAME=$2
 
-. ~/priv/setup.sh
+DIR=$(dirname $0)/svn
+GIT_URL="https://$GITHUB_USER:$GITHUB_PASS@github.com/$GITHUB_USER/$NAME"
 
-mkdir -p "$2" &&
-cd "$2" &&
-git init --bare &&
-git svn -s init "$SVN_URL" &&
-git remote add origin  "$GIT_URL" &&
-git config --add remote.origin.push 'refs/remotes/svn/*:refs/heads/*' &&
-~/trifles/bin/ghr create "$NAME" &&
-git push
+if [ -e "$DIR/$NAME" ]; then
+	echo "Already syncing $NAME"
+	echo "TODO: check url"
+	exit 1
+fi
+
+. ~/priv/gh-mir-ror.sh
+
+{
+	mkdir -p "$DIR/$NAME" &&
+	cd "$DIR/$NAME" &&
+	git init --bare &&
+	GIT_DIR="$PWD" git svn --prefix=svn/ -s init "$SVN_URL" &&
+	git remote add origin  "$GIT_URL" &&
+	git config --ddd remote.origin.push 'refs/remotes/svn/trunk:refs/heads/master' &&
+	git config --add remote.origin.push 'refs/remotes/svn/*:refs/heads/*' &&
+	ghr create "$NAME" "from $SVN_URL" &&
+	git svn fetch &&
+	git push origin
+} || rm -rf "$DIR/$NAME"
