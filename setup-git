@@ -1,0 +1,32 @@
+#! /bin/sh
+
+VCS=git
+
+if [ $# -ne 2 ]; then
+	echo "usage: $(basename $0) $VCS-url repo-name"
+	exit 1
+fi
+
+SRC_URL=$1
+NAME=$2
+
+DIR=$(dirname $0)/$VCS
+DEST_URL="https://$GITHUB_USER:$GITHUB_PASS@github.com/$GITHUB_USER/$NAME"
+
+if [ -e "$DIR/$NAME" ]; then
+	echo "Already syncing $NAME"
+	echo "TODO: check url"
+	exit 1
+fi
+
+. ~/priv/gh-mir-ror.sh
+
+{
+	mkdir -p "$DIR/" &&
+	cd "$DIR/" &&
+	git clone --mirror "$SRC_URL"  &&
+	cd "$NAME.git" &&
+	git remote add mirror "$DEST_URL" &&
+	ghr create "$NAME" "from $SRC_URL" &&
+	git push mirror --mirror
+} || rm -rf "$DIR/$NAME"

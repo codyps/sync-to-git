@@ -25,7 +25,7 @@ fi
 	git init --bare &&
 	GIT_DIR="$PWD" git svn --prefix=svn/ -s init "$SVN_URL" &&
 	git remote add origin  "$GIT_URL" &&
-	git config --ddd remote.origin.push 'refs/remotes/svn/trunk:refs/heads/master' &&
+	git config --add remote.origin.push 'refs/remotes/svn/trunk:refs/heads/master' &&
 	git config --add remote.origin.push 'refs/remotes/svn/*:refs/heads/*' &&
 	ghr create "$NAME" "from $SVN_URL" &&
 	git svn fetch &&
