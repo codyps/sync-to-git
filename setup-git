@@ -10,6 +10,7 @@ fi
 SRC_URL=$1
 NAME=$2
 
+. ~/priv/gh-mir-ror.sh
 DIR=$(dirname $0)/$VCS
 DEST_URL="https://$GITHUB_USER:$GITHUB_PASS@github.com/$GITHUB_USER/$NAME"
 
@@ -19,7 +20,6 @@ if [ -e "$DIR/$NAME" ]; then
 	exit 1
 fi
 
-. ~/priv/gh-mir-ror.sh
 
 {
 	mkdir -p "$DIR/" &&
