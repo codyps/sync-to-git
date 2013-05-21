@@ -20,7 +20,7 @@ if [ -e "$DIR/$NAME" ]; then
 fi
 
 
-{
+(
 	mkdir -p "$DIR/$NAME" &&
 	cd "$DIR/$NAME" &&
 	git init --bare &&
@@ -31,4 +31,6 @@ fi
 	ghr create "$NAME" "from $SVN_URL" &&
 	git svn fetch &&
 	git push origin
-} || rm -rf "$DIR/$NAME"
+) || { rm -rf "$DIR/$NAME"; exit 1; }
+
+touch "$DIR/$NAME.sync"

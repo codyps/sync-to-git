@@ -21,7 +21,7 @@ if [ -e "$DIR/$NAME" ]; then
 fi
 
 
-{
+(
 	mkdir -p "$DIR/" &&
 	cd "$DIR/" &&
 	git clone --mirror "$SRC_URL"  &&
@@ -29,4 +29,6 @@ fi
 	git remote add mirror "$DEST_URL" &&
 	ghr create "$NAME" "from $SRC_URL" &&
 	git push mirror --mirror
-} || rm -rf "$DIR/$NAME"
+) || { rm -rf "$DIR/$NAME"; exit 1 } 
+
+touch "$DIR/$NAME.sync"

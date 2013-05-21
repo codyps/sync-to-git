@@ -18,6 +18,9 @@ for i in svn/*; do
 		continue
 	fi
 	pr 1 "processing $i"
+	if ! [ -e "$i.sync" ]; then
+		continue;
+	fi
 
 	( echo +++++ $i ; date; cd $i && git svn fetch && git push origin --mirror; ) >>logs/$i.log 2>&1
 done
@@ -25,5 +28,9 @@ done
 for i in git/*; do
 	! [ -d $i ] && continue
 	pr 1 "processing $i"
+	if ! [ -e "$i.sync" ]; then
+		continue;
+	fi
+
 	( echo +++++ $i ; date; cd $i && git fetch && git push mirror --mirror; ) >>logs/$i.log 2>&1
 done
