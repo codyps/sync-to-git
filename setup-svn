@@ -31,6 +31,6 @@ fi
 	ghr create "$NAME" "from $SVN_URL" &&
 	git svn fetch &&
 	git push origin
-) || { rm -rf "$DIR/$NAME"; exit 1; }
+) || { exit 1; }
 
 touch "$DIR/$NAME.sync"
