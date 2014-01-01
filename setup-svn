@@ -1,12 +1,14 @@
 #! /bin/sh
 
-if [ $# -ne 2 ]; then
-	echo "usage: $(basename $0) svn-url repo-name"
+if [ $# -lt 2 ]; then
+	echo "usage: $(basename $0) svn-url repo-name [extra git svn init args ...]"
 	exit 1
 fi
 
 SVN_URL=$1
 NAME=$2
+shift
+shift
 
 . ~/priv/gh-mir-ror.sh
 
@@ -24,13 +26,13 @@ fi
 	mkdir -p "$DIR/$NAME" &&
 	cd "$DIR/$NAME" &&
 	git init --bare &&
-	GIT_DIR="$PWD" git svn --prefix=svn/ -s init "$SVN_URL" &&
+	GIT_DIR="$PWD" git svn --prefix=svn/ init "$@" "$SVN_URL" &&
 	git remote add origin  "$GIT_URL" &&
 	git config --add remote.origin.push 'refs/remotes/svn/trunk:refs/heads/master' &&
 	git config --add remote.origin.push 'refs/remotes/svn/*:refs/heads/*' &&
 	ghr create "$NAME" "from $SVN_URL" &&
 	git svn fetch &&
-	git push origin
+	git push origin --all
 ) || { exit 1; }
 
 touch "$DIR/$NAME.sync"
