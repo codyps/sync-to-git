@@ -31,7 +31,7 @@ fi
 	git config --add remote.origin.push 'refs/remotes/svn/trunk:refs/heads/master' &&
 	git config --add remote.origin.push 'refs/remotes/svn/*:refs/heads/*' &&
 	ghr create "$NAME" "from $SVN_URL" &&
-	git svn fetch &&
+	git svn fetch --log-window=10000 &&
 	git push origin --all
 ) || { exit 1; }
 
